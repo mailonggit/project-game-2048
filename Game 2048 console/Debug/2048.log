@@ -1,0 +1,18 @@
+﻿  Menu.cpp
+e:\long's data\lập trình\game console\2048_v2_nguyen\menu.cpp(52): warning C4018: '<': signed/unsigned mismatch
+  Main.cpp
+  Location.cpp
+e:\long's data\lập trình\game console\2048_v2_nguyen\location.cpp(7): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+e:\long's data\lập trình\game console\2048_v2_nguyen\location.cpp(35): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Graphics.cpp
+e:\long's data\lập trình\game console\2048_v2_nguyen\graphics.cpp(6): warning C4838: conversion from 'int' to 'SHORT' requires a narrowing conversion
+e:\long's data\lập trình\game console\2048_v2_nguyen\graphics.cpp(86): warning C4018: '<=': signed/unsigned mismatch
+e:\long's data\lập trình\game console\2048_v2_nguyen\graphics.cpp(105): warning C4018: '<=': signed/unsigned mismatch
+  Game.cpp
+  File.cpp
+  Draw.cpp
+e:\long's data\lập trình\game console\2048_v2_nguyen\draw.cpp(75): warning C4309: 'initializing': truncation of constant value
+e:\long's data\lập trình\game console\2048_v2_nguyen\draw.cpp(106): warning C4309: 'initializing': truncation of constant value
+  Generating Code...
+  2048.vcxproj -> E:\Long's data\Lập trình\Game Console\2048_V2_Nguyen\Debug\2048.exe
+  2048.vcxproj -> E:\Long's data\Lập trình\Game Console\2048_V2_Nguyen\Debug\2048.pdb (Partial PDB)
