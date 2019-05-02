@@ -1,0 +1,4 @@
+﻿  Source.cpp
+e:\programming\programming-game-with-cocos\project\project-game-2048\2048-game-algorithms\version1.0\source.cpp(281): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Version1.0.vcxproj -> E:\Programming\programming-game-with-cocos\Project\project-game-2048\2048-game-Algorithms\Debug\Version1.0.exe
+  Version1.0.vcxproj -> E:\Programming\programming-game-with-cocos\Project\project-game-2048\2048-game-Algorithms\Debug\Version1.0.pdb (Partial PDB)
