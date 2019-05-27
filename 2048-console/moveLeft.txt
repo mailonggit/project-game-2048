@@ -1,0 +1,29 @@
+public void moveLeft(char x)
+	{
+		for (i = 0; i < 4; ++i)
+		{
+			for (j = 0; j < 3; ++j)
+			{
+				for (int k = j + 1; k < 4; ++k)
+				{
+					if (board[i][j] == board[i][k] && board[i][j] != 0)
+					{
+						board[i][j] *= 2;
+						board[i][k] = 0;
+						break;
+					}
+					else
+					{
+						if (board[i][j] == 0 && board[i][k] != 0)
+						{
+							Swap(board[i][j], board[i][k]);
+						}
+						else if (board[i][j] != 0 && board[i][k] != 0 && board[i][j] != board[i][k])
+						{
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
