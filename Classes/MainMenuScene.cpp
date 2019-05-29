@@ -24,7 +24,7 @@ bool MainMenuScene::init()
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	int xMid = visibleSize.width / 2 + origin.x;
-	int yMid = visibleSize.height / 2+ origin.y;
+	int yMid = visibleSize.height / 2 + origin.y;
 	//create background
 	auto background = Sprite::create("menu-background.png");
 	background->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
