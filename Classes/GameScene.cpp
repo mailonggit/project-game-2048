@@ -5,12 +5,10 @@ USING_NS_CC;
 Scene* GameScene::createScene()
 {
 	//create scene
-	auto scene = Scene::createWithPhysics();
-	scene->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+	auto scene = Scene::create();
 
 	//create layer
 	auto layer = GameScene::create();
-	layer->setPhysicsWorld(scene->getPhysicsWorld());
 
 	//add layer to the scene
 	scene->addChild(layer);
@@ -21,23 +19,18 @@ Scene* GameScene::createScene()
 // on "init" you need to initialize your instance
 bool GameScene::init()
 {
-    if ( !Layer::init() )
-    {
-        return false;
-    }
+	if (!Layer::init())
+	{
+		return false;
+	}
 
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-    Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	int xMid = visibleSize.width / 2 + origin.x;
 	int yMid = visibleSize.height / 2 + origin.y;
 
-	auto edgeBody = PhysicsBody::createEdgeBox(visibleSize, PHYSICSBODY_MATERIAL_DEFAULT);
-	auto edgeNode = Node::create();
-	edgeNode->setPosition(Point(xMid, yMid));
-	edgeNode->setPhysicsBody(edgeBody);
-	this->addChild(edgeNode);
 	//background
-	auto background = Sprite::create("menu-background.png");
+	auto background = Sprite::create("game-background.png");
 	background->setPosition(Point(xMid, yMid));
 	this->addChild(background);
 
@@ -52,22 +45,35 @@ bool GameScene::init()
 
 	//update change
 	this->scheduleUpdate();
-    return true;
+	return true;
 }
 void GameScene::initBoard()
 {
-	board[4][4] = 0;
+	for (int i = 0; i < 4; ++i)
+	{
+		for (int j = 0; j < 4; ++j) 
+		{
+			board[i][j] = 0;
+		}
+	}
 	randomNumber();
 	randomNumber();
+	checkEnd = false;
+	checkUp = checkDown = checkLeft = checkRight = false;
 }
 void GameScene::randomNumber()
 {
-	int i, j;
-	do
+	int i = 0, j = 0;
+	while (board[i][j] != 0)
 	{
-		i = cocos2d::RandomHelper::random_int(0, 4);
-		j = cocos2d::RandomHelper::random_int(0, 4);
-	} while (board[i][j] != 0);//value in location i, j = 0 => out of the loop
+		i = cocos2d::RandomHelper::random_int(0, 3);
+		j = cocos2d::RandomHelper::random_int(0, 3);
+		if (board[i][j] == 0)
+		{
+			break;
+		}
+		//board[i][j] != 0
+	}
 	board[i][j] = 2;
 }
 void GameScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *pevent)
@@ -76,7 +82,21 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *pevent)
 	//left 26
 	//down 29
 	//up 28
-	if ((int)keyCode == 28)
+	if ((int)keyCode == 26)
+	{
+		log("You've just pressed left, number %d!", keyCode);
+		moveUp();
+		randomNumber();
+	}
+
+	else if ((int)keyCode == 27)
+	{
+		log("You've just pressed right, number %d!", keyCode);
+		moveDown();
+
+		randomNumber();
+	}
+	else if ((int)keyCode == 28)
 	{
 		log("You've just pressed up, number %d!", keyCode);
 		moveLeft();
@@ -88,25 +108,13 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *pevent)
 		moveRight();
 		randomNumber();
 	}
-	else if ((int)keyCode == 26)
-	{
-		log("You've just pressed left, number %d!", keyCode);
-		moveUp();
-		randomNumber();
-	}
-	else if ((int)keyCode == 27)
-	{
-		log("You've just pressed right, number %d!", keyCode);
-		moveDown();
-		
-		randomNumber();
-	}
+
 	//this->schedule(schedule_selector(GameScene::render));
 	//log("Key with keycode %d pressed", keyCode);
 }
 void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *pevent)
 {
-	
+
 }
 void Swap(int &a, int &b)
 {
@@ -136,6 +144,7 @@ void GameScene::moveUp()
 					}
 					else if (board[j][i] != 0 && board[k][i] != 0 && board[j][i] != board[k][i])
 					{
+						checkUp = true;
 						break;
 					}
 				}
@@ -167,6 +176,7 @@ void GameScene::moveDown()
 					}
 					else if (board[j][i] != 0 && board[k][i] != 0 && board[j][i] != board[k][i])
 					{
+						checkDown = true;
 						break;
 					}
 
@@ -197,6 +207,7 @@ void GameScene::moveLeft()
 					}
 					else if (board[i][j] != 0 && board[i][k] != 0 && board[i][j] != board[i][k])
 					{
+						checkLeft = true;
 						break;
 					}
 				}
@@ -226,6 +237,7 @@ void GameScene::moveRight()
 					}
 					else if (board[i][j] != 0 && board[i][k] != 0 && board[i][j] != board[i][k])
 					{
+						checkRight = true;
 						break;
 					}
 				}
@@ -239,20 +251,35 @@ void GameScene::update(float dt)
 	{
 		for (int j = 0; j < 4; ++j)
 		{
+			//print square
 			std::string name = std::to_string(board[i][j]) + ".png";
 			square = new Square(this, name, i, j);
+			//check win
+			if (board[i][j] == 64)
+			{
+				auto visibleSize = Director::getInstance()->getVisibleSize();
+				Vec2 origin = Director::getInstance()->getVisibleOrigin();
+				//create label for win
+				auto lbl_win = Label::createWithTTF("Ok, you win! Don't need to discuss", "fonts/Marker Felt.ttf", 30);
+				lbl_win->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+				lbl_win->enableShadow(Color4B::RED);
+				this->addChild(lbl_win, 1);
+			}
+			//check game over
+			else if ((checkUp == true && checkDown == true && checkLeft == true && checkRight == true) || checkEnd == true)
+			{
+				auto visibleSize = Director::getInstance()->getVisibleSize();
+				Vec2 origin = Director::getInstance()->getVisibleOrigin();
+				//create label for loser
+				auto lbl_win = Label::createWithTTF("You foooooooool!", "fonts/Marker Felt.ttf", 30);
+				lbl_win->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+				lbl_win->enableShadow(Color4B::RED);
+				this->addChild(lbl_win, 1);
+			}
 		}
 	}
 }
-//void GameScene::render(float dt)
-//{
-//	
-//	for (int i = 0; i < 4; ++i)
-//	{
-//		for (int j = 0; j < 4; ++j)
-//		{
-//			std::string name = std::to_string(board[i][j]) + ".png";
-//			square = new Square(this, name, i, j);
-//		}
-//	}
-//}
+GameScene::~GameScene()
+{
+	delete square;
+}

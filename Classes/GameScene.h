@@ -2,8 +2,8 @@
 #define __GAME_SCENE_H__
 
 #include "cocos2d.h"
-#include "BoardGame.h"
 #include <string>
+#include "Square.h"
 using namespace cocos2d;
 class GameScene : public cocos2d::Layer
 {
@@ -13,22 +13,23 @@ public:
     virtual bool init();
 	void initBoard();
 	void randomNumber();
-
-	void setPhysicsWorld(cocos2d::PhysicsWorld *world) { sceneWorld = world; };
+	~GameScene();
 	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event *pevent);
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event *pevent);
 	void moveUp();
 	void moveDown();
 	void moveLeft();
 	void moveRight();
+	//bool checkGameOver();
+	//bool checkGameWin();
 	void update(float dt);
-	//void render(float dt);
     // implement the "static create()" method manually
     CREATE_FUNC(GameScene);
 private:
 	
-	cocos2d::PhysicsWorld *sceneWorld;
+	//cocos2d::PhysicsWorld *sceneWorld;
 	int board[4][4];
+	bool checkWin, checkEnd, checkUp, checkDown, checkLeft, checkRight;
 	Square *square;
 };
 

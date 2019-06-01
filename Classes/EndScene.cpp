@@ -23,5 +23,13 @@ bool EndScene::init()
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+	//create background
+	auto background = Sprite::create("end-background.png");
+	background->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+	
+	this->addChild(background);
+
+	//create button
+
     return true;
 }
