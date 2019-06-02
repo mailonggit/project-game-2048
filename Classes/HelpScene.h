@@ -11,7 +11,7 @@ public:
     static cocos2d::Scene* createScene();
 
     virtual bool init();   
-	Vec2 customSize(double);
+	Vec2 customSize(double, double);
 	void script();
     // implement the "static create()" method manually
     CREATE_FUNC(HelpScene);

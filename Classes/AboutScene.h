@@ -12,7 +12,7 @@ public:
 
     virtual bool init();   
     // implement the "static create()" method manually
-	Vec2 customSize(double );
+	Vec2 customSize(double, double);
 	void script();
     CREATE_FUNC(AboutScene);
 private:

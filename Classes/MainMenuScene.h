@@ -12,7 +12,8 @@ public:
 
     virtual bool init();
 	void createButton();
-	Vec2 customSize(double);
+	Vec2 customSize(double, double);
+	void spriteSheet();
     // implement the "static create()" method manually
     CREATE_FUNC(MainMenuScene);
 private:

@@ -1,19 +1,19 @@
-#include "EndScene.h"
+#include "WinScene.h"
 #include "MainMenuScene.h"
 #include "Definitions.h"
 #include "GameScene.h"
 USING_NS_CC;
 
-Scene* EndScene::createScene()
+Scene* WinScene::createScene()
 {
 	auto scene = Scene::create();
-	auto layer = EndScene::create();
+	auto layer = WinScene::create();
 	//add layer to the scene
 	scene->addChild(layer);
 	return scene;
 }
 // on "init" you need to initialize your instance
-bool EndScene::init()
+bool WinScene::init()
 {
 	if (!Layer::init())
 	{
@@ -24,26 +24,26 @@ bool EndScene::init()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	//create background
-	auto background = Sprite::create("end-background.png");
+	auto background = Sprite::create("win-background.png");
 	background->setPosition(customSize(0.5, 0.5));
 
 	this->addChild(background);
 
 	//create button
-
+	createButton();
 	return true;
 }
-Vec2 EndScene::customSize(double a, double b)
+Vec2 WinScene::customSize(double a, double b)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	return Vec2(a * visibleSize.width + origin.x, b * visibleSize.height + origin.y);
 }
-void EndScene::createButton()
+void WinScene::createButton()
 {
 	//create item
-	auto playAgainItem = MenuItemImage::create("play-again.png", "play-again.png", CC_CALLBACK_1(EndScene::goToGameScene, this));
-	auto exitItem = MenuItemImage::create("exit.png", "exit.png", CC_CALLBACK_1(EndScene::exitGame, this));
+	auto playAgainItem = MenuItemImage::create("play-again.png", "play-again.png", CC_CALLBACK_1(WinScene::goToGameScene, this));
+	auto exitItem = MenuItemImage::create("exit.png", "exit.png", CC_CALLBACK_1(WinScene::exitGame, this));
 
 	//set position for button
 	playAgainItem->setPosition(customSize(0.5, 0.3));
@@ -53,15 +53,13 @@ void EndScene::createButton()
 	auto menu = Menu::create(playAgainItem, exitItem, NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu);
-
-
 }
-void EndScene::goToGameScene(Ref *sender)
+void WinScene::goToGameScene(Ref *sender)
 {
 	auto scene = GameScene::createScene();
 	Director::getInstance()->replaceScene(TransitionFade::create(0.5, scene));
 }
-void EndScene::exitGame(Ref *sender)
+void WinScene::exitGame(Ref *sender)
 {
 	Director::getInstance()->end();
 }

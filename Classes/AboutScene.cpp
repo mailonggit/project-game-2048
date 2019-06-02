@@ -23,31 +23,36 @@ bool AboutScene::init()
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
 	//create background
 	auto background = Sprite::create("background.png");
-	background->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+	background->setPosition(customSize(0.5, 0.5));
 	this->addChild(background);
+
 	//create title
 	auto lbl_title = Label::createWithTTF("Contributors", "fonts/Marker Felt.ttf", 50);
-	lbl_title->setPosition(customSize(0.9));
+	lbl_title->setPosition(customSize(0.5, 0.9));
 	lbl_title->enableShadow(Color4B::BLUE);
 	this->addChild(lbl_title, 1);
+
 	//script
 	script();
+
 	//create backToMenu item
 	auto backToMenu = MenuItemImage::create("back-to-menu-button.png", "back-to-menu-button.png", CC_CALLBACK_1(AboutScene::goToMenuScene, this));
-	backToMenu->setPosition(customSize(0.1));
+	backToMenu->setPosition(customSize(0.5, 0.1));
+
 	//add item to menu
 	auto menu = Menu::create(backToMenu, NULL);
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu);
     return true;
 }
-Vec2 AboutScene::customSize(double a)
+Vec2 AboutScene::customSize(double a, double b)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	return Vec2(visibleSize.width / 2 + origin.x, a * visibleSize.height + origin.y);
+	return Vec2(a * visibleSize.width  + origin.x, b * visibleSize.height + origin.y);
 }
 void AboutScene::script()
 {
@@ -55,13 +60,12 @@ void AboutScene::script()
 	for (int i = 0; i < 4; ++i)
 	{
 		auto lbl_name = Label::createWithTTF(name[i], "fonts/Marker Felt.ttf", 30);
-		lbl_name->setPosition(customSize(0.7 - 0.1 * i));
+		lbl_name->setPosition(customSize(0.5, 0.8 - 0.1 * i));
 		lbl_name->enableShadow(Color4B::GREEN);
 		this->addChild(lbl_name, 1);
 	}
 }
 void AboutScene::goToMenuScene(Ref *sender)
 {
-	auto scene = MainMenuScene::createScene();
-	Director::getInstance()->replaceScene(TransitionFade::create(TRANSITION_TIME, scene));
+	Director::getInstance()->popScene();
 }
