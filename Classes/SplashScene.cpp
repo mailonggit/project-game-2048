@@ -27,6 +27,24 @@ bool SplashScene::init()
 	auto background = Sprite::create("splash-background.png");
 	background->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
 	this->addChild(background);
+
+	//create loading bar
+	auto loadingBar = LoadingBar::create("loading-bar.png");
+	loadingBar->setDirection(LoadingBar::Direction::LEFT);
+	loadingBar->setPosition(visibleSize / 2);
+	loadingBar->setPercent(0);
+	this->addChild(loadingBar);
+	this->schedule([=](float delta)
+	{
+		float percent = loadingBar->getPercent();
+		percent += 5;
+		loadingBar->setPercent(percent);
+		if (percent > loadingBar->getContentSize().width)
+		{
+			this->unschedule("updateLoadingBar");
+		}
+
+	}, 0.1f, "updateLoadingBar");
 	//run schedule
 	this->schedule(schedule_selector(SplashScene::goToMainMenuScene), DISPLAY_TIME_SPLASH_SCENE);
     return true;

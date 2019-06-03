@@ -32,9 +32,10 @@ private:
 	void undo(Ref *sender);
 	void reset(Ref *sender);
 	//cocos2d::PhysicsWorld *sceneWorld;
-	int board[4][4];
+	int board[4][4], score;
 	bool checkWin;
 	Square *square;
+	Label *lbl_score;
 };
 
 #endif // __GAME_SCENE_H__

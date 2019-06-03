@@ -1,6 +1,7 @@
 #include "GameScene.h"
 #include "EndScene.h"
 #include "WinScene.h"
+#include "MainMenuScene.h"
 #include "Definitions.h"
 USING_NS_CC;
 
@@ -26,9 +27,6 @@ bool GameScene::init()
 		return false;
 	}
 
-	auto visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
 	//create sprite sheet
 	spriteSheet();
 
@@ -53,20 +51,30 @@ void GameScene::spriteSheet()
 	//create sprite
 	auto background = Sprite::create("background.png");
 	auto background_title = Sprite::create("button.png");
-	
+	auto background_score = Sprite::create("score-background.png");
+
 	//set position for sprite
 	background->setPosition(customSize(0.5, 0.5));
 	background_title->setPosition(customSize(0.5, 0.9));
+	background_score->setPosition(customSize(0.8, 0.75));
 
 	//create label
 	auto lbl_title = Label::createWithTTF("2048", "fonts/Marker Felt.ttf", 50);
 	lbl_title->setPosition(customSize(0.5, 0.9));
 	lbl_title->enableShadow(Color4B::BLUE);
-	
+
+	String *Score = String::createWithFormat("%i", score);
+	lbl_score = Label::createWithTTF(Score->getCString(), "fonts/Marker felt.ttf", 25);
+	lbl_score->setPosition(customSize(0.8, 0.73));
+	lbl_title->enableShadow(Color4B::BLUE);
+	this->addChild(lbl_score, 1);
+
 	//add sprite and label to the scene
 	this->addChild(background);
 	this->addChild(lbl_title, 1);	
 	this->addChild(background_title);
+	this->addChild(background_score);
+	
 }
 void GameScene::createButton()
 {
@@ -88,6 +96,7 @@ void GameScene::createButton()
 }
 void GameScene::initBoard()
 {
+	score = 0;
 	for (int i = 0; i < 4; ++i)
 	{
 		for (int j = 0; j < 4; ++j) 
@@ -107,11 +116,13 @@ void GameScene::randomNumber()
 		j = cocos2d::RandomHelper::random_int(0, 3);
 		if (board[i][j] == 0)
 		{
+			
 			break;
 		}
-		//board[i][j] != 0
 	}
-	board[i][j] = 2;
+	int number = cocos2d::RandomHelper::random_int(0, 100);
+	number < 90 ? board[i][j] = 2 : board[i][j] = 4;
+	
 }
 void GameScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *pevent)
 {
@@ -167,6 +178,9 @@ void GameScene::moveUp()
 				{
 					board[j][i] *= 2;
 					board[k][i] = 0;
+					score += board[j][i];
+					String *Score = String::createWithFormat("%i", score);
+					lbl_score->setString(Score->getCString());
 					break;
 				}
 				else
@@ -198,6 +212,9 @@ void GameScene::moveDown()
 				{
 					board[j][i] *= 2;
 					board[k][i] = 0;
+					score += board[j][i];
+					String *Score = String::createWithFormat("%i", score);
+					lbl_score->setString(Score->getCString());
 					break;
 				}
 				else
@@ -230,6 +247,9 @@ void GameScene::moveLeft()
 				{
 					board[i][j] *= 2;
 					board[i][k] = 0;
+					score += board[i][j];
+					String *Score = String::createWithFormat("%i", score);
+					lbl_score->setString(Score->getCString());
 					break;
 				}
 				else
@@ -260,6 +280,9 @@ void GameScene::moveRight()
 				{
 					board[i][j] *= 2;
 					board[i][k] = 0;
+					score += board[i][j];
+					String *Score = String::createWithFormat("%i", score);
+					lbl_score->setString(Score->getCString());
 					break;
 				}
 				else
@@ -280,26 +303,45 @@ void GameScene::moveRight()
 }
 void GameScene::update(float dt)
 {
+	
+	//display board
 	for (int i = 0; i < 4; ++i)
 	{
 		for (int j = 0; j < 4; ++j)
 		{
-			//print square
+			//display square
 			std::string name = std::to_string(board[i][j]) + ".png";
 			square = new Square(this, name, i, j);
 			//check win
-			if (board[i][j] == 64)
+			if (board[i][j] == 2048)
 			{
 				auto scene = WinScene::createScene();
 				Director::getInstance()->replaceScene(TransitionFade::create(TRANSITION_TIME, scene));
 			}
-			//check game over
-			else if (checkGameOver() == true)
-			{
-				auto scene = EndScene::createScene();
-				Director::getInstance()->replaceScene(TransitionFade::create(TRANSITION_TIME, scene));
-			}
 		}
+	}	
+	//check game over
+	if (checkGameOver() == true)
+	{
+		Director::getInstance()->pause();
+		//label for loser
+		auto message = Label::createWithTTF("You foooooooooool!", "fonts/Marker felt.ttf", 50);
+		message->setPosition(customSize(0.5, 0.5));
+		message->enableShadow(Color4B::RED);
+		this->addChild(message, 1);
+
+		//create item
+		auto playAgainItem = MenuItemImage::create("play-again.png", "play-again.png", CC_CALLBACK_1(GameScene::reset, this));
+		auto exitItem = MenuItemImage::create("exit.png", "exit.png", CC_CALLBACK_1(GameScene::goToMenu, this));
+
+		//set position for button
+		playAgainItem->setPosition(customSize(0.5, 0.3));
+		exitItem->setPosition(customSize(0.5, 0.1));
+
+		//add all the item to menu
+		auto menu = Menu::create(playAgainItem, exitItem, NULL);
+		menu->setPosition(Vec2::ZERO);
+		this->addChild(menu);
 	}
 }
 Vec2 GameScene::customSize(double a, double b)
@@ -310,7 +352,8 @@ Vec2 GameScene::customSize(double a, double b)
 }
 void GameScene::goToMenu(Ref *sender)
 {
-	Director::getInstance()->popScene();
+	auto scene = MainMenuScene::createScene();
+	Director::getInstance()->replaceScene(TransitionFade::create(TRANSITION_TIME, scene));
 }
 void GameScene::undo(Ref *sender)
 {
@@ -325,7 +368,7 @@ bool GameScene::checkGameOver()
 {
 	for (int i = 0; i < 4; ++i)
 	{
-		for (int j = 0; j < 4; ++j)
+		for (int j = 0; j < 3; ++j)//j < 3 because j + 1
 		{
 			if (board[i][j] == board[i][j + 1])
 			{
@@ -335,7 +378,7 @@ bool GameScene::checkGameOver()
 	}
 	for (int i = 0; i < 4; ++i)
 	{
-		for (int j = 0; j < 4; ++j)
+		for (int j = 0; j < 3; ++j)
 		{
 			if (board[j][i] == board[j + 1][i])
 			{
