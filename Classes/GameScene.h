@@ -4,7 +4,9 @@
 #include "cocos2d.h"
 #include <string>
 #include "Square.h"
+#include <stack>
 using namespace cocos2d;
+using namespace std;
 class GameScene : public cocos2d::Layer
 {
 public:
@@ -22,6 +24,7 @@ public:
 	void moveRight();
 	Vec2 customSize(double, double);
 	void createButton();
+	bool checkZero();
 	bool checkGameOver();
 	//bool checkGameWin();
 	void update(float dt);
@@ -31,11 +34,14 @@ private:
 	void goToMenu(Ref *sender);
 	void undo(Ref *sender);
 	void reset(Ref *sender);
+	void Exit(Ref *sender);
 	//cocos2d::PhysicsWorld *sceneWorld;
 	int board[4][4], score;
 	bool checkWin;
 	Square *square;
 	Label *lbl_score;
+	//stack<int[4][4]> Undo;
+	int size;
 };
 
 #endif // __GAME_SCENE_H__

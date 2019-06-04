@@ -1,10 +1,9 @@
 #include "GameScene.h"
-#include "EndScene.h"
 #include "WinScene.h"
 #include "MainMenuScene.h"
 #include "Definitions.h"
-USING_NS_CC;
 
+USING_NS_CC;
 Scene* GameScene::createScene()
 {
 	//create scene
@@ -17,9 +16,6 @@ Scene* GameScene::createScene()
 	scene->addChild(layer);
 	return scene;
 }
-
-
-// on "init" you need to initialize your instance
 bool GameScene::init()
 {
 	if (!Layer::init())
@@ -71,19 +67,19 @@ void GameScene::spriteSheet()
 
 	//add sprite and label to the scene
 	this->addChild(background);
-	this->addChild(lbl_title, 1);	
+	this->addChild(lbl_title, 1);
 	this->addChild(background_title);
 	this->addChild(background_score);
-	
+
 }
 void GameScene::createButton()
 {
 	//create item for home, undo, reset
-	
+
 	auto home = MenuItemImage::create("home.png", "home.png", CC_CALLBACK_1(GameScene::goToMenu, this));
 	auto undo = MenuItemImage::create("undo.png", "undo.png", CC_CALLBACK_1(GameScene::undo, this));
 	auto reset = MenuItemImage::create("reset.png", "reset.png", CC_CALLBACK_1(GameScene::reset, this));
-	
+
 	//set position for sprite
 	home->setPosition(customSize(0.1, 0.9));
 	undo->setPosition(customSize(0.7, 0.9));
@@ -97,9 +93,10 @@ void GameScene::createButton()
 void GameScene::initBoard()
 {
 	score = 0;
+	size = 0;
 	for (int i = 0; i < 4; ++i)
 	{
-		for (int j = 0; j < 4; ++j) 
+		for (int j = 0; j < 4; ++j)
 		{
 			board[i][j] = 0;
 		}
@@ -109,20 +106,22 @@ void GameScene::initBoard()
 }
 void GameScene::randomNumber()
 {
-	int i = 0, j = 0;
-	while (board[i][j] != 0)
+	int i, j;
+	i = cocos2d::RandomHelper::random_int(0, 3);
+	j = cocos2d::RandomHelper::random_int(0, 3);
+	if (board[i][j] == 0)
 	{
-		i = cocos2d::RandomHelper::random_int(0, 3);
-		j = cocos2d::RandomHelper::random_int(0, 3);
-		if (board[i][j] == 0)
-		{
-			
-			break;
-		}
+		int number = cocos2d::RandomHelper::random_int(0, 100);
+		number < 90 ? board[i][j] = 2 : board[i][j] = 4;
 	}
-	int number = cocos2d::RandomHelper::random_int(0, 100);
-	number < 90 ? board[i][j] = 2 : board[i][j] = 4;
-	
+	else if (checkZero() == true)//no zero on the board
+	{
+		return;//stop the loop
+	}
+	else
+	{
+		randomNumber();
+	}
 }
 void GameScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *pevent)
 {
@@ -132,26 +131,26 @@ void GameScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *pevent)
 	//right 27
 	if ((int)keyCode == 26 && checkGameOver() == false)
 	{
-		log("You've just pressed left, number %d!", keyCode);
+		log("You've just pressed up, number %d!", keyCode);	
 		moveUp();
 		randomNumber();
 	}
 
 	else if ((int)keyCode == 27 && checkGameOver() == false)
 	{
-		log("You've just pressed right, number %d!", keyCode);
+		log("You've just pressed down, number %d!", keyCode);
 		moveDown();
 		randomNumber();
 	}
 	else if ((int)keyCode == 28 && checkGameOver() == false)
 	{
-		log("You've just pressed up, number %d!", keyCode);
+		log("You've just pressed left, number %d!", keyCode);
 		moveLeft();
 		randomNumber();
 	}
 	else if ((int)keyCode == 29 && checkGameOver() == false)
 	{
-		log("You've just pressed down, number %d!", keyCode);
+		log("You've just pressed right, number %d!", keyCode);
 		moveRight();
 		randomNumber();
 	}
@@ -191,13 +190,15 @@ void GameScene::moveUp()
 					}
 					else if (board[j][i] != 0 && board[k][i] != 0 && board[j][i] != board[k][i])
 					{
-						
 						break;
 					}
 				}
 			}
 		}
 	}
+	//add new value of board to the stack and increase the size of stack
+	//Undo.push(board);
+	size++;
 }
 void GameScene::moveDown()
 {
@@ -226,7 +227,7 @@ void GameScene::moveDown()
 					}
 					else if (board[j][i] != 0 && board[k][i] != 0 && board[j][i] != board[k][i])
 					{
-						
+
 						break;
 					}
 
@@ -234,6 +235,9 @@ void GameScene::moveDown()
 			}
 		}
 	}
+	//add new value of board to the stack and increase the size of stack
+	//Undo.push(board);
+	size++;
 }
 void GameScene::moveLeft()
 {
@@ -260,13 +264,16 @@ void GameScene::moveLeft()
 					}
 					else if (board[i][j] != 0 && board[i][k] != 0 && board[i][j] != board[i][k])
 					{
-						
+
 						break;
 					}
 				}
 			}
 		}
 	}
+	//add new value of board to the stack and increase the size of stack
+	//Undo.push(board);
+	size++;
 }
 void GameScene::moveRight()
 {
@@ -293,17 +300,19 @@ void GameScene::moveRight()
 					}
 					else if (board[i][j] != 0 && board[i][k] != 0 && board[i][j] != board[i][k])
 					{
-			
+
 						break;
 					}
 				}
 			}
 		}
 	}
+	//add new value of board to the stack and increase the size of stack
+	//Undo.push(board);
+	size++;
 }
 void GameScene::update(float dt)
 {
-	
 	//display board
 	for (int i = 0; i < 4; ++i)
 	{
@@ -319,20 +328,20 @@ void GameScene::update(float dt)
 				Director::getInstance()->replaceScene(TransitionFade::create(TRANSITION_TIME, scene));
 			}
 		}
-	}	
+	}
 	//check game over
 	if (checkGameOver() == true)
 	{
-		Director::getInstance()->pause();
+		//Director::getInstance()->pause();
 		//label for loser
-		auto message = Label::createWithTTF("You foooooooooool!", "fonts/Marker felt.ttf", 50);
+		auto message = Label::createWithTTF("You loseeeeeeeeee!", "fonts/Marker felt.ttf", 50);
 		message->setPosition(customSize(0.5, 0.5));
 		message->enableShadow(Color4B::RED);
 		this->addChild(message, 1);
 
 		//create item
 		auto playAgainItem = MenuItemImage::create("play-again.png", "play-again.png", CC_CALLBACK_1(GameScene::reset, this));
-		auto exitItem = MenuItemImage::create("exit.png", "exit.png", CC_CALLBACK_1(GameScene::goToMenu, this));
+		auto exitItem = MenuItemImage::create("exit.png", "exit.png", CC_CALLBACK_1(GameScene::Exit, this));
 
 		//set position for button
 		playAgainItem->setPosition(customSize(0.5, 0.3));
@@ -348,7 +357,52 @@ Vec2 GameScene::customSize(double a, double b)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	return Vec2(a * visibleSize.width  + origin.x, b * visibleSize.height + origin.y);
+	return Vec2(a * visibleSize.width + origin.x, b * visibleSize.height + origin.y);
+}
+bool GameScene::checkZero()
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		for (int j = 0; j < 4; ++j)
+		{
+			if (board[i][j] == 0)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+bool GameScene::checkGameOver()
+{
+	if (checkZero())
+	{
+		return false;
+	}
+	else
+	{
+		for (int i = 0; i < 4; ++i)
+		{
+			for (int j = 0; j < 3; ++j)//j < 3 because j + 1
+			{
+				if (board[i][j] == board[i][j + 1])
+				{
+					return false;
+				}
+			}
+		}
+		for (int i = 0; i < 4; ++i)
+		{
+			for (int j = 0; j < 3; ++j)
+			{
+				if (board[j][i] == board[j + 1][i])
+				{
+					return false;
+				}
+			}
+		}
+	}
+	return true;
 }
 void GameScene::goToMenu(Ref *sender)
 {
@@ -357,34 +411,18 @@ void GameScene::goToMenu(Ref *sender)
 }
 void GameScene::undo(Ref *sender)
 {
-
+	//repeat until stack empty and size < 1
+	/*if (!Undo.empty() && size > 1)
+	{
+		int	copyBoard[4][4] = Undo.top();
+	}*/
 }
 void GameScene::reset(Ref *sender)
 {
 	auto scene = GameScene::createScene();
 	Director::getInstance()->replaceScene(TransitionFade::create(0.5, scene));
 }
-bool GameScene::checkGameOver()
+void GameScene::Exit(Ref *sender)
 {
-	for (int i = 0; i < 4; ++i)
-	{
-		for (int j = 0; j < 3; ++j)//j < 3 because j + 1
-		{
-			if (board[i][j] == board[i][j + 1])
-			{
-				return false;
-			}
-		}
-	}
-	for (int i = 0; i < 4; ++i)
-	{
-		for (int j = 0; j < 3; ++j)
-		{
-			if (board[j][i] == board[j + 1][i])
-			{
-				return false;
-			}
-		}
-	}
-	return true;
+	Director::getInstance()->end();
 }

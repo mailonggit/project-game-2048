@@ -23,10 +23,6 @@ bool SplashScene::init()
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-	//create background
-	auto background = Sprite::create("splash-background.png");
-	background->setPosition(Point(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-	this->addChild(background);
 
 	//create loading bar
 	auto loadingBar = LoadingBar::create("loading-bar.png");
@@ -37,7 +33,7 @@ bool SplashScene::init()
 	this->schedule([=](float delta)
 	{
 		float percent = loadingBar->getPercent();
-		percent += 5;
+		percent += cocos2d::RandomHelper::random_int(1, 5);
 		loadingBar->setPercent(percent);
 		if (percent > loadingBar->getContentSize().width)
 		{

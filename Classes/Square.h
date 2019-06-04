@@ -7,6 +7,7 @@ class Square
 {
 public:
 	Square(cocos2d::Layer *layer, std::string name, int i, int j);
+
 private:
 	cocos2d::Size visibleSize;
 	cocos2d::Vec2 origin;
