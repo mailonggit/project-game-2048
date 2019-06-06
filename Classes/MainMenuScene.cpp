@@ -1,5 +1,5 @@
 #include "MainMenuScene.h"
-#include "GameScene.h"
+#include "Mode.h"
 #include "Definitions.h"
 #include "HelpScene.h"
 #include "AboutScene.h"
@@ -65,7 +65,7 @@ void MainMenuScene::spriteSheet()
 void MainMenuScene::createButton()
 {
 	//play item, how to play, contributors, exit game
-	auto playItem = MenuItemImage::create("play-button.png", "play-button.png", CC_CALLBACK_1(MainMenuScene::goToGameScene, this));
+	auto playItem = MenuItemImage::create("play-button.png", "play-button.png", CC_CALLBACK_1(MainMenuScene::goToModeScene, this));
 	auto helpItem = MenuItemImage::create("how-to-play-button.png", "how-to-play-button.png", CC_CALLBACK_1(MainMenuScene::goToHelpScene, this));
 	auto aboutItem = MenuItemImage::create("contributors-button.png", "contributors-button.png", CC_CALLBACK_1(MainMenuScene::goToAboutScene, this));
 	auto exitItem = MenuItemImage::create("exit-button.png", "exit-button.png", CC_CALLBACK_1(MainMenuScene::ExitGame, this));
@@ -88,9 +88,9 @@ Vec2 MainMenuScene::customSize(double a, double b)
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	return Vec2(a * visibleSize.width + origin.x, b * visibleSize.height + origin.y);
 }
-void MainMenuScene::goToGameScene(cocos2d::Ref *sender)
+void MainMenuScene::goToModeScene(cocos2d::Ref *sender)
 {
-	auto scene = GameScene::createScene();
+	auto scene = Mode::createScene();
 	Director::getInstance()->pushScene(TransitionFade::create(TRANSITION_TIME, scene));
 }
 void MainMenuScene::goToHelpScene(cocos2d::Ref *sender)
