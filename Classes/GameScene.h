@@ -1,5 +1,5 @@
-#ifndef __MODE2_H__
-#define __MODE2_H__
+#ifndef __GAME_SCENE_H__
+#define __GAME_SCENE_H__
 
 #include "cocos2d.h"
 #include <string>
@@ -7,7 +7,7 @@
 #include <stack>
 using namespace cocos2d;
 using namespace std;
-class Mode2 : public cocos2d::Layer
+class GameScene : public cocos2d::Layer
 {
 public:
     static cocos2d::Scene* createScene();
@@ -18,7 +18,6 @@ public:
 	void randomNumber();
 	void onKeyPressed(EventKeyboard::KeyCode keyCode, Event *pevent);
 	void onKeyReleased(EventKeyboard::KeyCode keyCode, Event *pevent);
-	void Swap(int &, int &);
 	void moveUp();
 	void moveDown();
 	void moveLeft();
@@ -28,10 +27,9 @@ public:
 	bool checkZero();
 	bool checkGameOver();
 	//bool checkGameWin();
-	void tick(float dt);
 	void update(float dt);
     // implement the "static create()" method manually
-    CREATE_FUNC(Mode2);
+    CREATE_FUNC(GameScene);
 private:
 	void goToMenu(Ref *sender);
 	void undo(Ref *sender);
@@ -39,7 +37,6 @@ private:
 	void Exit(Ref *sender);
 	//cocos2d::PhysicsWorld *sceneWorld;
 	int board[4][4], score;
-	float timer;
 	bool checkWin;
 	Square *square;
 	Label *lbl_score;

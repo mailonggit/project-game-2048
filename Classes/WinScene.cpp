@@ -1,7 +1,7 @@
 #include "WinScene.h"
 #include "MainMenuScene.h"
 #include "Definitions.h"
-#include "Mode.h"
+#include "GameScene.h"
 USING_NS_CC;
 
 Scene* WinScene::createScene()
@@ -42,7 +42,7 @@ Vec2 WinScene::customSize(double a, double b)
 void WinScene::createButton()
 {
 	//create item
-	auto playAgainItem = MenuItemImage::create("play-again.png", "play-again.png", CC_CALLBACK_1(WinScene::goToModeScene, this));
+	auto playAgainItem = MenuItemImage::create("play-again.png", "play-again.png", CC_CALLBACK_1(WinScene::goToGameScene, this));
 	auto exitItem = MenuItemImage::create("exit.png", "exit.png", CC_CALLBACK_1(WinScene::exitGame, this));
 
 	//set position for button
@@ -54,9 +54,9 @@ void WinScene::createButton()
 	menu->setPosition(Vec2::ZERO);
 	this->addChild(menu);
 }
-void WinScene::goToModeScene(Ref *sender)
+void WinScene::goToGameScene(Ref *sender)
 {
-	auto scene = Mode::createScene();
+	auto scene = GameScene::createScene();
 	Director::getInstance()->replaceScene(TransitionFade::create(0.5, scene));
 }
 void WinScene::exitGame(Ref *sender)

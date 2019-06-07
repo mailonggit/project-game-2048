@@ -1,7 +1,8 @@
 #include "AppDelegate.h"
 #include "SplashScene.h"
 #include "MainMenuScene.h"
-#include "Mode2.h"
+#include "EndScene.h"
+#include "GameScene.h"
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
 
@@ -96,7 +97,7 @@ bool AppDelegate::applicationDidFinishLaunching()
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = Mode2::createScene();
+    auto scene = SplashScene::createScene();
 
     // run
     director->runWithScene(scene);

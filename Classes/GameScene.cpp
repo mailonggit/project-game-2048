@@ -1,22 +1,22 @@
-#include "Mode2.h"
+#include "GameScene.h"
 #include "WinScene.h"
 #include "MainMenuScene.h"
 #include "Definitions.h"
 
 USING_NS_CC;
-Scene* Mode2::createScene()
+Scene* GameScene::createScene()
 {
 	//create scene
 	auto scene = Scene::create();
 
 	//create layer
-	auto layer = Mode2::create();
+	auto layer = GameScene::create();
 
 	//add layer to the scene
 	scene->addChild(layer);
 	return scene;
 }
-bool Mode2::init()
+bool GameScene::init()
 {
 	if (!Layer::init())
 	{
@@ -34,18 +34,18 @@ bool Mode2::init()
 
 	//key listener
 	auto listener = EventListenerKeyboard::create();
-	listener->onKeyPressed = CC_CALLBACK_2(Mode2::onKeyPressed, this);
-	listener->onKeyReleased = CC_CALLBACK_2(Mode2::onKeyReleased, this);
+	listener->onKeyPressed = CC_CALLBACK_2(GameScene::onKeyPressed, this);
+	listener->onKeyReleased = CC_CALLBACK_2(GameScene::onKeyReleased, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 
 	//update change
 	this->scheduleUpdate();
 	return true;
 }
-void Mode2::spriteSheet()
+void GameScene::spriteSheet()
 {
 	//create sprite
-	auto background = Sprite::create("mode2-background.png");
+	auto background = Sprite::create("background.png");
 	auto background_title = Sprite::create("button.png");
 	auto background_score = Sprite::create("score-background.png");
 
@@ -72,13 +72,13 @@ void Mode2::spriteSheet()
 	this->addChild(background_score);
 
 }
-void Mode2::createButton()
+void GameScene::createButton()
 {
 	//create item for home, undo, reset
 
-	auto home = MenuItemImage::create("home.png", "home.png", CC_CALLBACK_1(Mode2::goToMenu, this));
-	auto undo = MenuItemImage::create("undo.png", "undo.png", CC_CALLBACK_1(Mode2::undo, this));
-	auto reset = MenuItemImage::create("reset.png", "reset.png", CC_CALLBACK_1(Mode2::reset, this));
+	auto home = MenuItemImage::create("home.png", "home.png", CC_CALLBACK_1(GameScene::goToMenu, this));
+	auto undo = MenuItemImage::create("undo.png", "undo.png", CC_CALLBACK_1(GameScene::undo, this));
+	auto reset = MenuItemImage::create("reset.png", "reset.png", CC_CALLBACK_1(GameScene::reset, this));
 
 	//set position for sprite
 	home->setPosition(customSize(0.1, 0.9));
@@ -90,11 +90,10 @@ void Mode2::createButton()
 	//add menu to the scene
 	this->addChild(menu);
 }
-void Mode2::initBoard()
+void GameScene::initBoard()
 {
 	score = 0;
 	size = 0;
-	timer = 0;
 	for (int i = 0; i < 4; ++i)
 	{
 		for (int j = 0; j < 4; ++j)
@@ -102,29 +101,29 @@ void Mode2::initBoard()
 			board[i][j] = 0;
 		}
 	}
-	srand(time(NULL));
 	randomNumber();
 	randomNumber();
 }
-void Mode2::randomNumber()
+void GameScene::randomNumber()
 {
 	int i, j;
-	do
-	{
-		i = cocos2d::RandomHelper::random_int(0, 3);
-		j = cocos2d::RandomHelper::random_int(0, 3);
-		if (checkZero() == false)//no more zero in the board
-		{
-			return;//out of function
-		}
-	} while (board[i][j] != 0);//loop until has no zero
-	if (checkZero() == true)//has zero
+	i = cocos2d::RandomHelper::random_int(0, 3);
+	j = cocos2d::RandomHelper::random_int(0, 3);
+	if (board[i][j] == 0)
 	{
 		int number = cocos2d::RandomHelper::random_int(0, 100);
 		number < 90 ? board[i][j] = 2 : board[i][j] = 4;
 	}
+	else if (checkZero() == true)//no zero on the board
+	{
+		return;//stop the loop
+	}
+	else
+	{
+		randomNumber();
+	}
 }
-void Mode2::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *pevent)
+void GameScene::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *pevent)
 {
 	//up 28
 	//down 29
@@ -132,7 +131,7 @@ void Mode2::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *pevent)
 	//right 27
 	if ((int)keyCode == 26 && checkGameOver() == false)
 	{
-		log("You've just pressed up, number %d!", keyCode);
+		log("You've just pressed up, number %d!", keyCode);	
 		moveUp();
 		randomNumber();
 	}
@@ -156,17 +155,17 @@ void Mode2::onKeyPressed(EventKeyboard::KeyCode keyCode, Event *pevent)
 		randomNumber();
 	}
 }
-void Mode2::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *pevent)
+void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event *pevent)
 {
 
 }
-void Mode2::Swap(int &a, int &b)
+void Swap(int &a, int &b)
 {
 	int temp = a;
 	a = b;
 	b = temp;
 }
-void Mode2::moveUp()
+void GameScene::moveUp()
 {
 	for (int i = 0; i < 4; i++)
 	{
@@ -200,9 +199,8 @@ void Mode2::moveUp()
 	//add new value of board to the stack and increase the size of stack
 	//Undo.push(board);
 	size++;
-	
 }
-void Mode2::moveDown()
+void GameScene::moveDown()
 {
 	for (int i = 0; i < 4; ++i)//on the row
 	{
@@ -210,7 +208,8 @@ void Mode2::moveDown()
 		{
 			for (int k = j - 1; k >= 0; k--)
 			{
-				 if (board[j][i] == board[k][i] && board[j][i] != 0)
+
+				if (board[j][i] == board[k][i] && board[j][i] != 0)
 				{
 					board[j][i] *= 2;
 					board[k][i] = 0;
@@ -240,7 +239,7 @@ void Mode2::moveDown()
 	//Undo.push(board);
 	size++;
 }
-void Mode2::moveLeft()
+void GameScene::moveLeft()
 {
 	for (int i = 0; i < 4; ++i)
 	{
@@ -276,7 +275,7 @@ void Mode2::moveLeft()
 	//Undo.push(board);
 	size++;
 }
-void Mode2::moveRight()
+void GameScene::moveRight()
 {
 	for (int i = 0; i < 4; ++i)
 	{
@@ -312,16 +311,8 @@ void Mode2::moveRight()
 	//Undo.push(board);
 	size++;
 }
-void Mode2::update(float dt)
+void GameScene::update(float dt)
 {
-	//this->schedule(schedule_selector(Mode2::tick));
-	timer += dt;
-	log("Timer: %f", timer);
-	if (timer > 5)
-	{
-		randomNumber();
-		timer = 0;
-	}
 	//display board
 	for (int i = 0; i < 4; ++i)
 	{
@@ -349,8 +340,8 @@ void Mode2::update(float dt)
 		this->addChild(message, 1);
 
 		//create item
-		auto playAgainItem = MenuItemImage::create("play-again.png", "play-again.png", CC_CALLBACK_1(Mode2::reset, this));
-		auto exitItem = MenuItemImage::create("exit.png", "exit.png", CC_CALLBACK_1(Mode2::Exit, this));
+		auto playAgainItem = MenuItemImage::create("play-again.png", "play-again.png", CC_CALLBACK_1(GameScene::reset, this));
+		auto exitItem = MenuItemImage::create("exit.png", "exit.png", CC_CALLBACK_1(GameScene::Exit, this));
 
 		//set position for button
 		playAgainItem->setPosition(customSize(0.5, 0.3));
@@ -362,16 +353,13 @@ void Mode2::update(float dt)
 		this->addChild(menu);
 	}
 }
-void Mode2::tick(float dt)
-{
-}
-Vec2 Mode2::customSize(double a, double b)
+Vec2 GameScene::customSize(double a, double b)
 {
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 	return Vec2(a * visibleSize.width + origin.x, b * visibleSize.height + origin.y);
 }
-bool Mode2::checkZero()
+bool GameScene::checkZero()
 {
 	for (int i = 0; i < 4; ++i)
 	{
@@ -385,7 +373,7 @@ bool Mode2::checkZero()
 	}
 	return false;
 }
-bool Mode2::checkGameOver()
+bool GameScene::checkGameOver()
 {
 	if (checkZero())
 	{
@@ -416,12 +404,12 @@ bool Mode2::checkGameOver()
 	}
 	return true;
 }
-void Mode2::goToMenu(Ref *sender)
+void GameScene::goToMenu(Ref *sender)
 {
 	auto scene = MainMenuScene::createScene();
 	Director::getInstance()->replaceScene(TransitionFade::create(TRANSITION_TIME, scene));
 }
-void Mode2::undo(Ref *sender)
+void GameScene::undo(Ref *sender)
 {
 	//repeat until stack empty and size < 1
 	/*if (!Undo.empty() && size > 1)
@@ -429,12 +417,12 @@ void Mode2::undo(Ref *sender)
 		int	copyBoard[4][4] = Undo.top();
 	}*/
 }
-void Mode2::reset(Ref *sender)
+void GameScene::reset(Ref *sender)
 {
-	auto scene = Mode2::createScene();
+	auto scene = GameScene::createScene();
 	Director::getInstance()->replaceScene(TransitionFade::create(0.5, scene));
 }
-void Mode2::Exit(Ref *sender)
+void GameScene::Exit(Ref *sender)
 {
 	Director::getInstance()->end();
 }

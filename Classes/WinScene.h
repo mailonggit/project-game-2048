@@ -17,7 +17,7 @@ public:
 	void script();
 	CREATE_FUNC(WinScene);
 private:
-	void goToModeScene(Ref *sender);
+	void goToGameScene(Ref *sender);
 	void exitGame(Ref *sender);
 };
 
