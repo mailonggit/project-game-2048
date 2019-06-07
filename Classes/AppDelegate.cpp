@@ -1,8 +1,6 @@
 #include "AppDelegate.h"
 #include "SplashScene.h"
 #include "MainMenuScene.h"
-#include "EndScene.h"
-#include "GameScene.h"
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
 

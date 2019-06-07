@@ -17,7 +17,7 @@ public:
     // implement the "static create()" method manually
     CREATE_FUNC(MainMenuScene);
 private:
-	void goToGameScene(cocos2d::Ref *sender);
+	void goToModeScene(cocos2d::Ref *sender);
 	void goToHelpScene(cocos2d::Ref *sender);
 	void goToAboutScene(cocos2d::Ref *sender);
 	void ExitGame(cocos2d::Ref *sender);
