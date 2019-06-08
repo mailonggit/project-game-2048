@@ -178,6 +178,37 @@ public:
 			}
 		}
 	}
+	bool Mode1::checkGameOver()
+	{
+		if (checkZero())
+		{
+			return false;
+		}
+		else
+		{
+			for (int i = 0; i < 4; ++i)
+			{
+				for (int j = 0; j < 3; ++j)//j < 3 because j + 1
+				{
+					if (board[i][j] == board[i][j + 1])
+					{
+						return false;
+					}
+				}
+			}
+			for (int i = 0; i < 4; ++i)
+			{
+				for (int j = 0; j < 3; ++j)
+				{
+					if (board[j][i] == board[j + 1][i])
+					{
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
 	public void redo() {
 		if (!redo.isEmpty()) {
 			board = redo.pop();
